@@ -1,1 +1,614 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1020" />
+  <title>MongoUI — CRUD Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+      <div class="brand">
+        <div class="brand-mark">M</div>
+
+        <div>
+          <strong>MongoUI</strong>
+          <span>CRUD Studio</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+
+        <button class="nav-item active" data-view="dashboard">
+          <span>▦</span>
+          Dashboard
+        </button>
+
+        <button class="nav-item" data-view="records">
+          <span>◫</span>
+          Records
+        </button>
+
+        <button class="nav-item" data-view="activity">
+          <span>◷</span>
+          Activity
+        </button>
+
+      </nav>
+
+      <div class="sidebar-card">
+
+        <span class="status-dot"></span>
+
+        <div>
+          <b>Frontend mode</b>
+          <small>Local demo storage</small>
+        </div>
+
+      </div>
+
+      <div class="sidebar-bottom">
+
+        <button class="nav-item" id="themeToggle">
+          <span>◐</span>
+          Toggle theme
+        </button>
+
+        <button class="nav-item" id="exportBtn">
+          <span>⇩</span>
+          Export JSON
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+
+        <button class="icon-btn mobile-menu" id="menuBtn">
+          ☰
+        </button>
+
+        <div class="breadcrumb">
+          <span>Workspace</span>
+          <b>/</b>
+          <strong id="pageTitle">Dashboard</strong>
+        </div>
+
+        <div class="top-actions">
+
+          <button class="icon-btn" id="refreshBtn">
+            ↻
+          </button>
+
+          <button class="avatar">
+            SS
+          </button>
+
+        </div>
+
+      </header>
+
+
+      <div class="content">
+
+        <!-- ================= DASHBOARD ================= -->
+
+        <section class="view active" id="dashboardView">
+
+          <div class="hero">
+
+            <div>
+
+              <span class="eyebrow">
+                MONGODB CRUD INTERFACE
+              </span>
+
+              <h1>
+                Manage your data
+                <br>
+                <em>beautifully.</em>
+              </h1>
+
+              <p>
+                A responsive frontend for creating, reading, updating,
+                and deleting MongoDB-style records.
+                This version uses localStorage until your API is connected.
+              </p>
+
+              <button class="primary-btn" id="heroAddBtn">
+                ＋ Create record
+              </button>
+
+            </div>
+
+            <div class="hero-orb">
+
+              <div class="orb-ring"></div>
+
+              <div class="orb-core">
+                DB
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- STATISTICS -->
+
+          <div class="stats-grid">
+
+            <article class="stat-card">
+
+              <span>Total records</span>
+
+              <strong id="statTotal">
+                0
+              </strong>
+
+              <small>
+                All documents
+              </small>
+
+            </article>
+
+
+            <article class="stat-card">
+
+              <span>Active</span>
+
+              <strong id="statActive">
+                0
+              </strong>
+
+              <small>
+                Currently active
+              </small>
+
+            </article>
+
+
+            <article class="stat-card">
+
+              <span>Categories</span>
+
+              <strong id="statCategories">
+                0
+              </strong>
+
+              <small>
+                Unique groups
+              </small>
+
+            </article>
+
+
+            <article class="stat-card">
+
+              <span>Last update</span>
+
+              <strong id="statUpdated">
+                —
+              </strong>
+
+              <small>
+                Local activity
+              </small>
+
+            </article>
+
+          </div>
+
+
+          <!-- RECENT RECORDS -->
+
+          <div class="section-heading">
+
+            <div>
+
+              <span class="eyebrow">
+                RECENT DATA
+              </span>
+
+              <h2>
+                Latest records
+              </h2>
+
+            </div>
+
+            <button class="text-btn" data-view="records">
+              View all →
+            </button>
+
+          </div>
+
+
+          <div class="table-card">
+
+            <div class="table-wrap">
+
+              <table>
+
+                <thead>
+
+                  <tr>
+                    <th>Record</th>
+                    <th>Email</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Updated</th>
+                    <th></th>
+                  </tr>
+
+                </thead>
+
+                <tbody id="recentTable"></tbody>
+
+              </table>
+
+            </div>
+
+            <div class="empty-state hidden" id="recentEmpty">
+              No records yet. Create your first document.
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ================= RECORDS ================= -->
+
+        <section class="view" id="recordsView">
+
+          <div class="page-heading">
+
+            <div>
+
+              <span class="eyebrow">
+                DATA COLLECTION
+              </span>
+
+              <h1>
+                Records
+              </h1>
+
+              <p>
+                Create and manage your documents.
+              </p>
+
+            </div>
+
+            <button class="primary-btn" id="addBtn">
+              ＋ Add record
+            </button>
+
+          </div>
+
+
+          <!-- FILTERS -->
+
+          <div class="toolbar">
+
+            <div class="search-box">
+
+              <span>⌕</span>
+
+              <input
+                id="searchInput"
+                type="search"
+                placeholder="Search name, email, category..."
+              />
+
+            </div>
+
+
+            <select id="categoryFilter">
+
+              <option value="">
+                All categories
+              </option>
+
+            </select>
+
+
+            <select id="statusFilter">
+
+              <option value="">
+                All statuses
+              </option>
+
+              <option value="Active">
+                Active
+              </option>
+
+              <option value="Inactive">
+                Inactive
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- RECORD TABLE -->
+
+          <div class="table-card">
+
+            <div class="table-meta">
+
+              <span id="recordCount">
+                0 records
+              </span>
+
+              <button class="ghost-btn" id="clearBtn">
+                Clear filters
+              </button>
+
+            </div>
+
+
+            <div class="table-wrap">
+
+              <table>
+
+                <thead>
+
+                  <tr>
+                    <th>Record</th>
+                    <th>Email</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Updated</th>
+                    <th>Actions</th>
+                  </tr>
+
+                </thead>
+
+                <tbody id="recordsTable"></tbody>
+
+              </table>
+
+            </div>
+
+
+            <div class="empty-state hidden" id="recordsEmpty">
+              No matching records found.
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ================= ACTIVITY ================= -->
+
+        <section class="view" id="activityView">
+
+          <div class="page-heading">
+
+            <div>
+
+              <span class="eyebrow">
+                AUDIT TRAIL
+              </span>
+
+              <h1>
+                Activity
+              </h1>
+
+              <p>
+                Recent actions performed in this frontend.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="activity-list" id="activityList"></div>
+
+        </section>
+
+      </div>
+
+    </main>
+
+  </div>
+
+
+  <!-- ================= MODAL ================= -->
+
+  <div class="modal-backdrop hidden" id="modalBackdrop">
+
+    <div
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modalTitle"
+    >
+
+      <div class="modal-head">
+
+        <div>
+
+          <span class="eyebrow" id="modalEyebrow">
+            NEW DOCUMENT
+          </span>
+
+          <h2 id="modalTitle">
+            Create record
+          </h2>
+
+        </div>
+
+        <button class="icon-btn" id="closeModal">
+          ×
+        </button>
+
+      </div>
+
+
+      <form id="recordForm">
+
+        <input
+          type="hidden"
+          id="recordId"
+        />
+
+
+        <div class="form-grid">
+
+          <label>
+            Full name
+
+            <input
+              id="name"
+              required
+              maxlength="80"
+              placeholder="e.g. Alex Morgan"
+            />
+
+          </label>
+
+
+          <label>
+            Email
+
+            <input
+              id="email"
+              type="email"
+              required
+              maxlength="120"
+              placeholder="alex@example.com"
+            />
+
+          </label>
+
+
+          <label>
+            Category
+
+            <select id="category" required>
+
+              <option value="Customer">
+                Customer
+              </option>
+
+              <option value="Employee">
+                Employee
+              </option>
+
+              <option value="Project">
+                Project
+              </option>
+
+              <option value="Lead">
+                Lead
+              </option>
+
+              <option value="Other">
+                Other
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <label>
+            Status
+
+            <select id="status" required>
+
+              <option>
+                Active
+              </option>
+
+              <option>
+                Inactive
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <label class="full">
+
+            Notes
+
+            <textarea
+              id="notes"
+              rows="4"
+              maxlength="500"
+              placeholder="Optional notes about this document..."
+            ></textarea>
+
+          </label>
+
+        </div>
+
+
+        <div
+          class="form-error hidden"
+          id="formError"
+        ></div>
+
+
+        <div class="modal-foot">
+
+          <button
+            type="button"
+            class="ghost-btn"
+            id="cancelBtn"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="primary-btn"
+            id="saveBtn"
+          >
+            Create record
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="toast-container"
+    id="toastContainer"
+  ></div>
+
+
+  <script src="js/app.js"></script>
+
+</body>
+</html>
